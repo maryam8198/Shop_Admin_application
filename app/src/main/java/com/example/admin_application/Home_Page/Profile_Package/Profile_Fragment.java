@@ -31,7 +31,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.admin_application.Config;
 import com.example.admin_application.R;
 import com.squareup.picasso.Picasso;
