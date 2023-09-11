@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/item_home"
+        android:title="صفحه اصلی "
+        android:icon="@drawable/ic_home_black_24dp"/>
+
+
+    <item
+        android:id="@+id/item_add"
+        android:title="اضافه کردن سفارشات"
+        android:icon="@drawable/baseline_add_box_24"/>
+
+
+    <item
+        android:id="@+id/item_product"
+        android:title="محصولات"
+        android:icon="@drawable/baseline_production_quantity_limits_24"/>
+
+
+
+    <item
+        android:id="@+id/item_profile"
+        android:title="پروقایل"
+        android:icon="@drawable/baseline_person_24"/>
+
+
+
+</menu>
