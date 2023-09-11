@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.admin_application.Home_Page.Add_Product.Add_Fragment;
+import com.example.admin_application.Home_Page.Product_Pachage.Product_Fragment;
 import com.example.admin_application.Home_Page.Profile_Package.Profile_Fragment;
 import com.example.admin_application.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,14 +49,14 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (id == R.id.item_profile) {
 
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container,new Profile_Fragment()).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.container, new Profile_Fragment()).commit();
                     btn_navigation.getMenu().getItem(3).setChecked(true);
 
                 }
                 return false;
             }
         });
-        
+
 
     }
 }
