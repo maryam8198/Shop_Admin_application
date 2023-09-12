@@ -192,9 +192,10 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
         }
     public void savaImage ()
     {
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-        username = sharedPreferences.getString("username", "");
-        String image = getStringImage(bitmap);
+        if(validateInputs()) {
+            SharedPreferences sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
+            username = sharedPreferences.getString("username", "");
+            String image = getStringImage(bitmap);
 
 
             if (image != null) {
@@ -204,7 +205,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
                         .build();
 
                 Api_Profile apiProfile = retrofit.create(Api_Profile.class);
-                Call<Model> call = apiProfile.uploadImage(image,username);
+                Call<Model> call = apiProfile.uploadImage(image, username);
 
                 call.enqueue(new Callback<Model>() {
                     @Override
@@ -212,9 +213,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
                         try {
                             if (response.isSuccessful()) {
                                 Toast.makeText(getContext(), "عکس با موفقیت ثبت شد", Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
+                            } else {
                                 Toast.makeText(getContext(), "خطایی رخ داده مجدد امتحان کنید", Toast.LENGTH_SHORT).show();
                             }
 
@@ -237,8 +236,9 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
 
 
             } else {
-                Toast.makeText(getContext(), "Please select an image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "یک عکس انتخاب کنید", Toast.LENGTH_SHORT).show();
             }
+        }
 
         }
 
@@ -301,6 +301,18 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
                 }
             });
         }
+
+    private boolean validateInputs() {
+        boolean isValid = true;
+        if (bitmap == null || bitmap.getWidth() == 0 || bitmap.getHeight() == 0)
+        {
+            Toast.makeText(getContext(), "مقادیر وارد شده نامعتبر", Toast.LENGTH_SHORT).show();
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
 }
 
 
