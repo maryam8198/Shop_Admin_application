@@ -52,10 +52,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Profile_Fragment extends Fragment implements View.OnClickListener{
 
 
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
 
-    private static final int REQUEST_IMAGE_Camera = 2;
-    private static final int REQUEST_IMAGE_GALLERY = 3;
 
     private Bitmap bitmap;
 
@@ -74,6 +71,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
       //  getData();
+
     }
 
     @Override
@@ -108,7 +106,6 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
 //            Toast.makeText(getContext(),bitmap+"",Toast.LENGTH_SHORT).show();
 //            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
 //            String imageFileName = "JPEG_" + timeStamp + "_";
-
             savaImage();
         }
         else if (view.getId() == R.id.image_user)
@@ -123,7 +120,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
     {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
-            ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.CAMERA},Config.REQUEST_CAMERA_PERMISSION);
         }
         else
         {
@@ -138,7 +135,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
             chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { cameraIntent });
 
             if (chooser.resolveActivity(getContext().getPackageManager()) != null) {
-                startActivityForResult(chooser, REQUEST_IMAGE_Camera);
+                startActivityForResult(chooser,Config.REQUEST_IMAGE_Camera);
             }
         }
 
@@ -148,7 +145,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == RESULT_OK && data != null && data.getData() != null) {
-            if (requestCode == REQUEST_IMAGE_Camera) {
+            if (requestCode ==Config.REQUEST_IMAGE_Camera) {
                 // عکس انتخاب شد
                 Uri imageUri = data.getData();
                 // انجام عملیات مرتبط با عکس
@@ -161,7 +158,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
                     e.printStackTrace();
                 }
             }
-             else if (requestCode == REQUEST_IMAGE_GALLERY) {
+             else if (requestCode == Config.REQUEST_IMAGE_GALLERY) {
                 // عکس از گالری انتخاب شد
                 Uri imageUri = data.getData();
                 // انجام عملیات مرتبط با عکس از گالری

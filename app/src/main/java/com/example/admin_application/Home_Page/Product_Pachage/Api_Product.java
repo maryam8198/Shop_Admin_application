@@ -18,8 +18,8 @@ public interface Api_Product {
                              @Field("product_name") String product_name,
                              @Field("details_product") String details_product,
                              @Field("price_product") String price_product,
-                             @Field("count_product") String count_product);
-//                            @Field("image") String image);
+                             @Field("count_product") String count_product,
+                             @Field("image") String image);
 
 
     @GET("Get_product.php")
