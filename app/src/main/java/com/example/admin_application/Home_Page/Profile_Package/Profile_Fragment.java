@@ -91,8 +91,6 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
         image_user.setOnClickListener(this);
         submit_for_upload_Image.setOnClickListener(this);
 
-
-
         getData();
         return view;
     }
@@ -196,7 +194,7 @@ public class Profile_Fragment extends Fragment implements View.OnClickListener{
             SharedPreferences sharedPreferences = requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
             username = sharedPreferences.getString("username", "");
             String image = getStringImage(bitmap);
-
+        //    Toast.makeText(getContext(), image+"", Toast.LENGTH_SHORT).show();
 
             if (image != null) {
                 Retrofit retrofit = new Retrofit.Builder()

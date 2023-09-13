@@ -1,11 +1,11 @@
 package com.example.admin_application.Home_Page.Product_Pachage;
 
-public class Model {
+public class Model_product {
 
     private int id;
     private String username,product_name,details_product,price_product,count_product,image_product;
 
-    public Model(int id, String username, String product_name, String details_product, String price_product, String count_product, String image_product) {
+    public Model_product(int id, String username, String product_name, String details_product, String price_product, String count_product, String image_product) {
         this.id = id;
         this.username = username;
         this.product_name = product_name;

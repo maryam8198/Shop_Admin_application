@@ -44,4 +44,6 @@ dependencies {
 
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+
+    implementation ("it.xabaras.android:recyclerview-swipedecorator:1.4")
 }

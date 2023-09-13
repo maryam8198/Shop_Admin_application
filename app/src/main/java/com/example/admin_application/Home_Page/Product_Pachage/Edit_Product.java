@@ -2,9 +2,7 @@ package com.example.admin_application.Home_Page.Product_Pachage;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -23,9 +21,11 @@ import androidx.core.content.ContextCompat;
 
 import com.example.admin_application.Config;
 import com.example.admin_application.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,23 +33,22 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Add_Product_Dialog extends AppCompatActivity {
-
-
-
+public class Edit_Product extends AppCompatActivity
+{
     private Bitmap bitmap;
     private ImageView image_product;
     private EditText product_name, details_product, price_product, count_product;
     private static String username;
     private Button btn_submit_product;
-
+    private int id_edit;
+    private List<Model_product> modelProducts;
+    private String flag_image = "";
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_product);
 
-        setTitle("اضافه کردن محصول جدید");
-
+    protected void onCreate(Bundle savedInstanceState)
+    {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_edit_product);
 
         product_name = findViewById(R.id.product_name);
         details_product = findViewById(R.id.details_product);
@@ -58,14 +57,20 @@ public class Add_Product_Dialog extends AppCompatActivity {
         image_product = findViewById(R.id.image_product);
         btn_submit_product = findViewById(R.id.btn_submit_product);
 
+        setTitle("");
+
+        //get Id
+        Intent intent = getIntent();
+         id_edit = intent.getIntExtra("id_edit",1);
+        getDate_Product(id_edit);
+
         btn_submit_product.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                InsertData();
-
+            public void onClick(View view)
+            {
+                update_Product();
             }
         });
-
         image_product.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +79,106 @@ public class Add_Product_Dialog extends AppCompatActivity {
         });
 
     }
+
+    private void getDate_Product(int id_edit)
+    {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Config.url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        Api_Product apiProduct = retrofit.create(Api_Product.class);
+        Call<List<Model_product>> call = apiProduct.get_data(id_edit);
+        call.enqueue(new Callback<List<Model_product>>() {
+            @Override
+            public void onResponse(Call<List<Model_product>> call, Response<List<Model_product>> response) {
+                 modelProducts = response.body();
+                if(modelProducts != null)
+                {
+                    product_name.setText(modelProducts.get(0).getProduct_name());
+                    details_product.setText(modelProducts.get(0).getDetails_product());
+                    price_product.setText(modelProducts.get(0).getPrice_product());
+                    count_product.setText(modelProducts.get(0).getCount_product());
+
+                    String image_url = Config.url + modelProducts.get(0).getImage_product();
+
+                    if(image_url == "")
+                    {
+                        image_product.setImageDrawable(getResources().getDrawable(R.drawable.baseline_add_a_photo_24));
+                    }
+                    else
+                    {
+                        Picasso.get()
+                                .load(image_url)
+                                .placeholder(R.drawable.baseline_person_24)
+                                .error(R.drawable.baseline_person_24)
+                                .into(image_product);
+
+                    }
+
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "خطا در دریافت اطلاعات", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Model_product>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "خطا در دریافت اطلاعات", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    public void update_Product()
+    {
+        String image ="";
+        String image_old = modelProducts.get(0).getImage_product();
+
+        if(bitmap == null)
+        {
+            image = image_old;
+            flag_image = "old";
+            //Toast.makeText(getApplicationContext(), image, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            flag_image = "new";
+           image = getStringImage(bitmap);
+            //Toast.makeText(getApplicationContext(), image, Toast.LENGTH_SHORT).show();
+        }
+        if(validateInputs())
+        {
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Config.url)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+
+            Api_Product apiProduct = retrofit.create(Api_Product.class);
+            Call<Model_product> call = apiProduct.edit_product(id_edit,
+                    product_name.getText().toString(),
+                    details_product.getText().toString(),
+                    price_product.getText().toString(),
+                    count_product.getText().toString(),
+                    image , flag_image);
+
+            call.enqueue(new Callback<Model_product>() {
+                @Override
+                public void onResponse(Call<Model_product> call, Response<Model_product> response) {
+                    Toast.makeText(getApplicationContext(), "با موفقیت انجام شد", Toast.LENGTH_SHORT).show();
+                    setResult(Config.RESULT_CODE_SUCCESS);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<Model_product> call, Throwable t) {
+                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
 
     private void openImageChooser()
     {
@@ -150,53 +255,6 @@ public class Add_Product_Dialog extends AppCompatActivity {
         return encodedImage;
 
     }
-
-    private void InsertData()
-    {
-        if(validateInputs())
-        {
-            // get username
-            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("prefs", Context.MODE_PRIVATE);
-            username = sharedPreferences.getString("username", "");
-
-            // get address pick
-            String image = getStringImage(bitmap);
-          //  Toast.makeText(getApplicationContext(), image, Toast.LENGTH_SHORT).show();
-
-            // request for server
-            Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(Config.url)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            Api_Product apiProduct = retrofit.create(Api_Product.class);
-            Call<Model_product> call = apiProduct.Insert_data(username,
-                    product_name.getText().toString(),
-                    details_product.getText().toString(),
-                    price_product.getText().toString(),
-                    count_product.getText().toString(),
-                    image
-            );
-
-            call.enqueue(new Callback<Model_product>() {
-                @Override
-                public void onResponse(Call<Model_product> call, Response<Model_product> response) {
-
-                    Toast.makeText(getApplicationContext(), "با موفقیت انجام شد", Toast.LENGTH_SHORT).show();
-                    setResult(Config.RESULT_CODE_SUCCESS);
-                    finish();
-                }
-
-                @Override
-                public void onFailure(Call<Model_product> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-
-    }
-
     private boolean validateInputs() {
         boolean isValid = true;
 
@@ -204,12 +262,7 @@ public class Add_Product_Dialog extends AppCompatActivity {
                 || price_product.getText().toString().trim().isEmpty() || count_product.getText().toString().trim().isEmpty()
         ) {
 
-            Toast.makeText(getApplicationContext(), "مقادیر وارد شده نامعتبر", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
-        if (bitmap == null || bitmap.getWidth() == 0 || bitmap.getHeight() == 0)
-        {
-            Toast.makeText(getApplicationContext(), "مقادیر وارد شده نامعتبر", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "مقادیر وارد شده نامعتبرh", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 

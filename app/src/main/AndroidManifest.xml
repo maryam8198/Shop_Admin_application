@@ -50,6 +50,8 @@
         <activity
             android:name=".Home_Page.Product_Pachage.Add_Product_Dialog"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog.MinWidth" />
+        <activity android:name=".Home_Page.Product_Pachage.Edit_Product"
+            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"/>
     </application>
 
 </manifest>
